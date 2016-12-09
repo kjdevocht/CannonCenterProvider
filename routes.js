@@ -18,6 +18,7 @@ router.route('/')
     });
 
 router.route('/getMenu/').get(menu.getMenu);
+router.route('/menu').post(menu.menu);
 
 
 

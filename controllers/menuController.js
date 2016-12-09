@@ -8,6 +8,10 @@ var dateRange = [];
 
 
 
+module.exports.menu = function(req, res){
+    console.log(req.body);
+};
+
 module.exports.getMenu = function(req, res){
     var meal = req.query['meal'];
     var date = req.query['date'];
