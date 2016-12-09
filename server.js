@@ -1,5 +1,11 @@
+//dependencies
 var express = require('express');
 var bodyParser = require('body-parser');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+
+
 var server = express();
 var port = 8080;
 var menu = require('./controllers/menuController');
@@ -20,7 +26,9 @@ server.use('/', routes);
 
 
 //Start the server
-server.listen(port, function(){
-    console.log("The Magic is happening on port " + port);
-    console.log("The Server Enviroment is "+server.settings.env);
+https.createServer({
+    key: fs.readFileSync(path.join(__dirname,'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname,'cert.pem'))
+}, app).listen(port, function () { 
+    console.log('app listening on port '+port+'!' );
 });
