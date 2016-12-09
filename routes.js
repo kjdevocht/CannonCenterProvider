@@ -17,10 +17,6 @@ router.route('/')
         //It will find and locate index.html from View or Scripts
     });
 
-
-router.route('/getMenuInfo')
-    .get(menu.getMenuInfo);
-
 router.route('/getMenu/').get(menu.getMenu);
 
 
