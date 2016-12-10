@@ -10,7 +10,8 @@ var dateRange = [];
 
 module.exports.menu = function(req, res){
     console.log(req.body);
-};
+    res.setHeader('Content-type', 'application/json');
+    res.send(JSON.stringify({speech: "At the Expo They are having pizza, At the Fusion they are having BBQ ribs, at the Grill they are having Hamburgers",displayText: "They are having BBQ Ribs",data: [],contextOut: [],source: "The Cannon Center Menu"})); };
 
 module.exports.getMenu = function(req, res){
     var meal = req.query['meal'];

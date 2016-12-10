@@ -27,8 +27,8 @@ server.use('/', routes);
 
 //Start the server
 https.createServer({
-    key: fs.readFileSync(path.join(__dirname,'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname,'cert.pem'))
-}, app).listen(port, function () { 
+    key: fs.readFileSync('/etc/letsencrypt/live/api.stoutsuidae.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.stoutsuidae.com/fullchain.pem')
+}, server).listen(port, function () { 
     console.log('app listening on port '+port+'!' );
 });
