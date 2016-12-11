@@ -3,8 +3,14 @@
  */
 var http = require("http");
 
-var mealId = [];
+var mealInfo = [];
 var dateRange = [];
+
+function mealData(mealname, mealid, servedate){
+    this.mealname = mealname;
+    this.mealid = mealid;
+    this.servedate = servedate;
+}
 
 
 
@@ -13,25 +19,58 @@ module.exports.menu = function(req, res){
 
     var meal = req.body.result.parameters['meal-type'];
     var date = getDate(req.body['timestamp']);
+    var cached = false;
+    for(i=0; i<mealInfo.length; i++){
+        if(mealInfo[i].mealname === meal && mealInfo[i].servedate ===date){
+            cached =true;
+            break;
+        }
+    }
+    if(!cached){
+        getMealIds(date);
+    }
+    else{
+        getMenu(meal, date);
+    }
+    
     res.setHeader('Content-type', 'application/json');
     res.send(JSON.stringify({speech: "At the Expo They are having pizza, At the Fusion they are having BBQ ribs, at the Grill they are having Hamburgers",displayText: "They are having BBQ Ribs",data: [],contextOut: [],source: "The Cannon Center Menu"})); 
 };
 
-module.exports.getMenu = function(req, res){
-    var meal = req.query['meal'];
-    var date = req.query['date'];
-    var currentOptions = {
+function getMealIds(date){
+    var options = {
         host: 'dining.byu.edu',
         port: 80,
-        path: '/commons/menu_pass.php?servedate='+getDate(new Date())+'&viewname=MenusJSON&_=1457029106452',
+        path: '/commons/menu_pass.php?servedate='+date+'&viewname=MenusJSON&_=1457029106452',
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             accept: '*/*'
         }
     };
-    callBYUAPI(currentOptions, 0, meal, date);
-};
+
+    var req = http.get(options, function(res2){
+        // Buffer the body entirely for processing as a whole.
+        var bodyChunks = [];
+        res2.on('data', function(chunk) {
+            // You can process streamed parts here...
+            bodyChunks.push(chunk);
+        }).on('end', function() {
+            var body = Buffer.concat(bodyChunks);
+            body = JSON.parse(body);
+            if(body['menus'].length > 0){
+                body['menus'].forEach(function(meal){
+                    mealInfo.push(new mealData(meal.mealname, meal.mealid, meal.servedate));
+                })
+                //getDetailedMenu(meal, date);
+            }
+        });
+        req.end();
+    });
+}
+
+
+
 
 function getDetailedMenu(meal, date){
     var queryMealId;
@@ -68,27 +107,6 @@ function getDetailedMenu(meal, date){
 
 
     getMenu(options);
-}
-
-
-function callBYUAPI(options, timeVar, meal, date){
-    var req = http.get(options, function(res2){
-        // Buffer the body entirely for processing as a whole.
-        var bodyChunks = [];
-        res2.on('data', function(chunk) {
-            // You can process streamed parts here...
-            bodyChunks.push(chunk);
-        }).on('end', function() {
-            var body = Buffer.concat(bodyChunks);
-            body = JSON.parse(body);
-            if(body['menus'].length > 0){
-                mealId[timeVar] = body['menus'][0]['mealid'];
-                dateRange[timeVar] = body['menus'][0]['shortname'].slice(-7).trim().split(' - ');
-                getDetailedMenu(meal, date);
-            }
-        });
-        req.end();
-    });
 }
 
 function getMenu(options){
