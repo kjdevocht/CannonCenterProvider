@@ -10,8 +10,12 @@ var dateRange = [];
 
 module.exports.menu = function(req, res){
     console.log(req.body);
+
+    var meal = req.body.result.parameters['meal-type'];
+    var date = getDate(req.body['timestamp']);
     res.setHeader('Content-type', 'application/json');
-    res.send(JSON.stringify({speech: "At the Expo They are having pizza, At the Fusion they are having BBQ ribs, at the Grill they are having Hamburgers",displayText: "They are having BBQ Ribs",data: [],contextOut: [],source: "The Cannon Center Menu"})); };
+    res.send(JSON.stringify({speech: "At the Expo They are having pizza, At the Fusion they are having BBQ ribs, at the Grill they are having Hamburgers",displayText: "They are having BBQ Ribs",data: [],contextOut: [],source: "The Cannon Center Menu"})); 
+};
 
 module.exports.getMenu = function(req, res){
     var meal = req.query['meal'];
@@ -141,7 +145,7 @@ function dateCreator(date, meal){
 }
 
 function getDate(queryDate){
-    var DateString = queryDate.getFullYear()+ ('0' + (queryDate.getMonth()+1)).slice(-2) + ('0' + queryDate.getDate()).slice(-2);
+    var DateString = queryDate.split('T')[0].replace(/-/g, '');
     return (DateString);
 }
 
