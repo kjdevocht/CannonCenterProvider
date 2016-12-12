@@ -20,24 +20,26 @@ module.exports.menu = function(req, res){
     var meal = req.body.result.parameters['meal-type'];
     var date = getDate(req.body['timestamp']);
     var cached = false;
+    var matchedMeal;
     for(i=0; i<mealInfo.length; i++){
         if(mealInfo[i].mealname === meal && mealInfo[i].servedate ===date){
             cached =true;
+            matchedMeal = i;
             break;
         }
     }
     if(!cached){
-        getMealIds(date);
+        getMealIds(date, req, res);
     }
     else{
-        getMenu(meal, date);
+        getMenu(mealInfo[matchedMeal], res);
     }
     
-    res.setHeader('Content-type', 'application/json');
-    res.send(JSON.stringify({speech: "At the Expo They are having pizza, At the Fusion they are having BBQ ribs, at the Grill they are having Hamburgers",displayText: "They are having BBQ Ribs",data: [],contextOut: [],source: "The Cannon Center Menu"})); 
+     
 };
 
-function getMealIds(date){
+
+function getMealIds(date, req, res){
     var options = {
         host: 'dining.byu.edu',
         port: 80,
@@ -49,7 +51,7 @@ function getMealIds(date){
         }
     };
 
-    var req = http.get(options, function(res2){
+    var req2 = http.get(options, function(res2){
         // Buffer the body entirely for processing as a whole.
         var bodyChunks = [];
         res2.on('data', function(chunk) {
@@ -62,42 +64,20 @@ function getMealIds(date){
                 body['menus'].forEach(function(meal){
                     mealInfo.push(new mealData(meal.mealname, meal.mealid, meal.servedate));
                 })
-                //getDetailedMenu(meal, date);
+                module.exports.menu(req, res);
             }
         });
-        req.end();
+        req2.end();
     });
 }
 
 
-
-
-function getDetailedMenu(meal, date){
-    var queryMealId;
-    var status = 200
-
-    var day = date.slice(-2);
-
-    if(mealId[0] && parseInt(day) >= parseInt(dateRange[0][0]) && parseInt(day) <= parseInt(dateRange[0][1])&& mealId[0])
-    {
-        queryMealId = mealId[0];
-    }
-    else if(mealId[1] && parseInt(day) >= parseInt(dateRange[1][0]) && parseInt(day) <= parseInt(dateRange[1][1])){
-        queryMealId = mealId[1]
-    }
-    else if(mealId[2] && parseInt(day) >= parseInt(dateRange[2][0]) && parseInt(day) <= parseInt(dateRange[2][1])){
-        queryMealId = mealId[2];
-    }
-    else{
-        res.sendStatus(404);
-        return;
-    }
-
+function getMenu(mealData, res){
 
     var options = {
         host: 'dining.byu.edu',
         port: 80,
-        path: '/commons/menu_pass.php?servedate='+date+'&mealname='+meal+'&mealid='+queryMealId+'&viewname=MenuItemsJSON',
+        path: '/commons/menu_pass.php?servedate='+mealData.servedate+'&mealname='+mealData.mealname+'&mealid='+mealData.mealid+'&viewname=MenuItemsJSON',
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -105,11 +85,11 @@ function getDetailedMenu(meal, date){
         }
     };
 
-
-    getMenu(options);
-}
-
-function getMenu(options){
+    var euro = [];
+    var expo = [];
+    var fusion = [];
+    var grainery = [];
+    var grill = [];
     var req = http.get(options, function(res2){
         // Buffer the body entirely for processing as a whole.
         var bodyChunks = [];
@@ -120,10 +100,35 @@ function getMenu(options){
             var body = Buffer.concat(bodyChunks);
             body = JSON.parse(body);
             //getEvents(res, body, processMenu);
+            var items = body.menus[0].recipes;
+            var i;
+            for(i=0; i<items.length; i++){
+                switch(items[i].category){
+                    case "Euro":
+                        euro.push(items[i].description);
+                        break;
+                    case "Expo":
+                        expo.push(items[i].description);
+                        break;
+                    case "Fusion":
+                        fusion.push(items[i].description);
+                        break;
+                    case "Grainery":
+                        grainery.push(items[i].description);
+                        break;
+                    case "Grill":
+                        grill.push(items[i].description);
+                        break;
+                }
+            }
+            
+            res.setHeader('Content-type', 'application/json');
+            res.send(JSON.stringify({speech: "At the Fusion station they are serving,"+fusion.toString()+" At the Expo station They are serving,"+expo.toString()+" At the Euro station they are serving"+euro.toString()+" At the Grill they are serving"+grill.toString(), displayText: "At the Fusion station they are serving,"+fusion.toString()+" At the Expo station They are serving,"+expo.toString()+" At the Euro station they are serving"+euro.toString()+" At the Grill they are serving"+grill.toString(), data: [],contextOut: [],source: "The Cannon Center Menu"}));
 
 
         });
         req.end();
+        
     });
 }
 
