@@ -154,7 +154,7 @@ function getMenu(mealData, res){
 
  
             res.setHeader('Content-type', 'application/json');
-            res.send(JSON.stringify({speech: "At the Fusion station they are serving food", displayText: "At the Fusion station they are serving food", data: {"slack": slack_message},contextOut: [],source: "The Cannon Center Menu"}));
+            res.send(JSON.stringify({speech: "At the Fusion station they are serving,"+fusion.toString()+".  At the Expo station They are serving,"+expo.toString()+". At the Euro station they are serving"+euro.toString()+". At the Grill they are serving"+grill.toString(), displayText: "At the Fusion station they are serving,"+fusion.toString()+".\n At the Expo station They are serving,"+expo.toString()+".\n At the Euro station they are serving"+euro.toString()+".\n At the Grill they are serving"+grill.toString(), data: {"slack": slack_message},contextOut: [],source: "The Cannon Center Menu"}));
 
 
         });
