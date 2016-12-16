@@ -29,8 +29,8 @@ var devPath = path.join(__dirname);
 
 //Start the server
 https.createServer({
-    key: fs.readFileSync(devPath+'/key.pem'),
-    cert: fs.readFileSync(devPath+'/cert.pem')
+    key: fs.readFileSync(prodPath+'privkey.pem'),
+    cert: fs.readFileSync(prodPath+'fullchain.pem')
 }, server).listen(port, function () { 
     console.log('app listening on port '+port+'!' );
 });
