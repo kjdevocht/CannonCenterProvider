@@ -145,6 +145,11 @@ function getMenu(mealData, res){
                         "title": "Euro",
                         "value": euro.toString(),
                         "short": "true"
+                    },
+                                        {
+                        "title": "Grill",
+                        "value": grill.toString(),
+                        "short": "true"
                     }
                 ],
 
