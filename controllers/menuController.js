@@ -101,7 +101,16 @@ function getMenu(mealData, res){
             //getEvents(res, body, processMenu);
             var items = body.menus[0].recipes;
             var i;
+            var speechString;
+            var displayString;
+            var menuException = false;
             for(i=0; i<items.length; i++){
+                if(items[i].description === "The Commons is Closed All Day"){
+                    speechString = items[i].description;
+                    displayString = items[i].description;
+                    menuException = true;
+                    break;
+                }
                 switch(items[i].category){
                     case "Euro":
                         euro.push(items[i].description);
@@ -120,46 +129,53 @@ function getMenu(mealData, res){
                         break;
                 }
             }
-            console.log('About to send the response');
 
     var slack_message = {
         "text": "Menu for "+mealData.servedate,
         "attachments": [
-            {
-                "title": mealData.mealname,
-                "title_link": 'http://dining.byu.edu/commons/menus.html',
-                "color": "#36a64f",
+                    {
+                        "title": mealData.mealname,
+                        "title_link": 'http://dining.byu.edu/commons/menus.html',
+                        "color": "#36a64f",
 
-                "fields": [
-                    {
-                        "title": "Fusion",
-                        "value": fusion.toString(),
-                        "short": "tru"
-                    },
-                    {
-                        "title": "Expo",
-                        "value": expo.toString(),
-                        "short": "true"
-                    },
-                    {
-                        "title": "Euro",
-                        "value": euro.toString(),
-                        "short": "true"
-                    },
-                                        {
-                        "title": "Grill",
-                        "value": grill.toString(),
-                        "short": "true"
+                        "fields": [
+                            {
+                                "title": "Fusion",
+                                "value": fusion.toString(),
+                                "short": true
+                            },
+                            {
+                                "title": "Expo",
+                                "value": expo.toString(),
+                                "short": true
+                            },
+                            {
+                                "title": "Euro",
+                                "value": euro.toString(),
+                                "short": true
+                            },
+                                                {
+                                "title": "Grill",
+                                "value": grill.toString(),
+                                "short": true
+                            }
+                        ],
+
                     }
-                ],
-
-             }
-        ]
-    }
-
- 
+                ]
+            }
+            if(!menuException){
+                speechString =  "At the Fusion station they are serving,"+fusion.toString()+
+                    ".  At the Expo station They are serving,"+expo.toString()+
+                    ". At the Euro station they are serving"+euro.toString()+
+                    ". At the Grill they are serving"+grill.toString()
+                displayString = "At the Fusion station they are serving,"+fusion.toString()+
+                    ".\n At the Expo station They are serving,"+expo.toString()+
+                    ".\n At the Euro station they are serving"+euro.toString()+
+                    ".\n At the Grill they are serving"+grill.toString()
+            }
             res.setHeader('Content-type', 'application/json');
-            res.send(JSON.stringify({speech: "At the Fusion station they are serving,"+fusion.toString()+".  At the Expo station They are serving,"+expo.toString()+". At the Euro station they are serving"+euro.toString()+". At the Grill they are serving"+grill.toString(), displayText: "At the Fusion station they are serving,"+fusion.toString()+".\n At the Expo station They are serving,"+expo.toString()+".\n At the Euro station they are serving"+euro.toString()+".\n At the Grill they are serving"+grill.toString(), data: {"slack": slack_message},contextOut: [],source: "The Cannon Center Menu"}));
+            res.send(JSON.stringify({speech:speechString, displayText: displayString, data: {"slack": slack_message},contextOut: [],source: "The Cannon Center Menu"}));
 
 
         });
