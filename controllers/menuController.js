@@ -18,7 +18,14 @@ function mealData(mealname, mealid, servedate) {
 module.exports.menu = function (req, res) {
     console.log(req.body);
     var meal = req.body.result.parameters['meal-type'];
-    var date = getDate(req.body['timestamp']);
+    var date;
+    if(req.body.result.parameters['date'] === ''){
+        date = convertTimeStampToDate(req.body['timestamp']);
+    }
+    else{
+        date = getDate(req.body.result.parameters['date']);
+    }
+    
     var cached = false;
     var matchedMeal;
     for (i = 0; i < mealInfo.length; i++) {
@@ -225,7 +232,12 @@ function dateCreator(date, meal) {
 }
 
 function getDate(queryDate) {
-    var DateString = queryDate.split('T')[0].replace(/-/g, '');
+    var DateString = queryDate.replace(/-/g, '');
+    return (DateString);
+}
+
+function convertTimeStampToDate(timeStamp){
+    var DateString = timeStamp.split('T')[0].replace(/-/g, '');
     return (DateString);
 }
 
