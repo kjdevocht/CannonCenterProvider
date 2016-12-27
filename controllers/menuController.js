@@ -114,8 +114,7 @@ function getMenu(mealData, res) {
             var menuException = false;
             for (i = 0; i < items.length; i++) {
                 if (items[i].description === "The Commons is Closed All Day") {
-                    speechString = cannonClosed;
-                    displayString = cannonClosed;
+                    responseString = cannonClosed;
                     menuException = true;
                     break;
                 }
@@ -177,17 +176,13 @@ function getMenu(mealData, res) {
                 var slack_message = {"text": cannonClosed}
             }
             if (!menuException) {
-                speechString = "At the Fusion station they are serving," + fusion.toString() +
+                responseString = "At the Fusion station they are serving," + fusion.toString() +
                     ".  At the Expo station They are serving," + expo.toString() +
-                    ". At the Euro station they are serving" + euro.toString() +
+                    ". At the Euro station they are serving," + euro.toString() +
                     ". At the Grill they are serving" + grill.toString()
-                displayString = "At the Fusion station they are serving," + fusion.toString() +
-                    ".\n At the Expo station They are serving," + expo.toString() +
-                    ".\n At the Euro station they are serving" + euro.toString() +
-                    ".\n At the Grill they are serving" + grill.toString()
             }
             res.setHeader('Content-type', 'application/json');
-            res.send(JSON.stringify({ speech: speechString, displayText: displayString, data: { "slack": slack_message }, contextOut: [], source: "The Cannon Center Menu" }));
+            res.send(JSON.stringify({ speech: responseString, displayText: responseString, data: { "slack": slack_message }, contextOut: [], source: "The Cannon Center Menu" }));
 
 
         });
