@@ -13,7 +13,7 @@ var dev = true;
 
 
 
-//Logging dependencies
+//Logging dependencies not used
 //var morgan = require('morgan');
 //var logger = require('./logging');
 
