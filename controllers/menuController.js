@@ -191,40 +191,6 @@ function getMenu(mealData, res) {
     });
 }
 
-function processMenu(res, menu, events) {
-
-    for (var i = 0; i < menu['menus'][0]['recipes'].length; i++) {
-        var eventFired = false;
-        for (var j = 0; j < events.length; j++) {
-            if (menu['menus'][0]['recipes'][i]['shortname'] === events[j]['Name']) {
-                console.log("Event in For Loop: " + JSON.stringify(events[j]));
-                sendNotification(menu['menus'][0]['servedate'], menu['menus'][0]['mealname'], events[j]);
-                eventFired = true;
-                break
-            }
-        }
-        if (!eventFired) {
-            registerEvents(menu['menus'][0]['servedate'], menu['menus'][0]['mealname'], menu['menus'][0]['recipes'][i]['shortname'], menu['menus'][0]['recipes'][i]['description']);
-
-        }
-    }
-
-    res.send(menu);
-}
-
-function dateCreator(date, meal) {
-
-    var mealStart;
-    var mealEnd;
-
-    var year = date.slice(0, 4);
-    var month = date.slice(4, 6);
-    var day = date.slice(-2);
-    var formattedDate = year + '-' + month + '-' + day + 'T';
-
-    return formattedDate;
-
-}
 
 function getDate(queryDate) {
     var DateString = queryDate.replace(/-/g, '');
@@ -234,15 +200,4 @@ function getDate(queryDate) {
 function convertTimeStampToDate(timeStamp){
     var DateString = timeStamp.split('T')[0].replace(/-/g, '');
     return (DateString);
-}
-
-function getMonday(weekAdjuster) {
-    d = new Date();
-    d.setDate(d.getDate() + weekAdjuster);
-
-    var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? 1 : 8); // adjust when day is sunday
-    var date = new Date(d.setDate(diff));
-
-    return date;
 }

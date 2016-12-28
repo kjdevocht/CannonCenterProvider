@@ -1,1 +1,22 @@
-{"id":"e8d9dd36-ffc6-4a81-a607-9b8e04fd5645","timestamp":"2016-12-11T04:19:33.627Z","result":{"source":"agent","resolvedQuery":"whats for lunch","speech":"","action":"meal.info","actionIncomplete":false,"parameters":{"meal-type":"Lunch","stations":""},"contexts":[],"metadata":{"intentId":"c5e57c3f-8887-4483-91a7-f650820c9ba6","webhookUsed":"true","webhookForSlotFillingUsed":"false","intentName":"meal-info"},"fulfillment":{"speech":"There seems to be a problem checking the menu at the moment. Please try again later","messages":[{"type":0,"speech":"There seems to be a problem checking the menu at the moment.  Please try again later"}]},"score":1},"status":{"code":200,"errorType":"success"},"sessionId":"2c1a275a-fa9f-4af3-a117-db2d89444ffd","originalRequest":null}
+{ id: '7e6ac092-7c7d-46bc-b26e-333fe87e9907',
+  timestamp: '2016-12-28T03:01:09.358Z',
+  result: 
+   { source: 'agent',
+     resolvedQuery: 'what\'s for lunch on the 15th',
+     speech: '',
+     action: 'meal.info',
+     actionIncomplete: false,
+     parameters: { date: '2017-01-15', stations: '', 'meal-type': 'LUNCH' },
+     contexts: [],
+     metadata: 
+      { intentId: 'c5e57c3f-8887-4483-91a7-f650820c9ba6',
+        webhookUsed: 'true',
+        webhookForSlotFillingUsed: 'false',
+        intentName: 'meal-info' },
+     fulfillment: 
+      { speech: 'There seems to be a problem checking the menu at the moment. Please try again later',
+        messages: [Object] },
+     score: 0.99 },
+  status: { code: 200, errorType: 'success' },
+  sessionId: 'b011a929-d69c-4bca-ba45-a44584abc732',
+  originalRequest: null }

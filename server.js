@@ -9,6 +9,7 @@ var path = require('path');
 var server = express();
 var port = 8080;
 var menu = require('./controllers/menuController');
+var dev = true;
 
 
 
@@ -27,10 +28,22 @@ server.use('/', routes);
 var prodPath = '/etc/letsencrypt/live/api.stoutsuidae.com/';
 var devPath = path.join(__dirname);
 
-//Start the server
-https.createServer({
-    key: fs.readFileSync(prodPath+'privkey.pem'),
-    cert: fs.readFileSync(prodPath+'fullchain.pem')
-}, server).listen(port, function () { 
-    console.log('app listening on port '+port+'!' );
-});
+
+if(dev){
+    //Start the Dev server
+    https.createServer({
+        key: fs.readFileSync(devPath+'/key.pem'),
+        cert: fs.readFileSync(devPath+'/cert.pem')
+    }, server).listen(port, function () { 
+        console.log('app listening on port '+port+'!' );
+    });
+}
+else{
+    //Start the Prod server
+    https.createServer({
+        key: fs.readFileSync(prodPath+'privkey.pem'),
+        cert: fs.readFileSync(prodPath+'fullchain.pem')
+    }, server).listen(port, function () { 
+        console.log('app listening on port '+port+'!' );
+    });
+}
