@@ -16,16 +16,22 @@ function mealData(mealname, mealid, servedate) {
 
 
 module.exports.menu = function (req, res) {
-    console.log(req.body);
-    var meal = req.body.result.parameters['meal-type'];
-    var date;
-    if(req.body.result.parameters['date'] === ''){
-        date = convertTimeStampToDate(req.body['timestamp']);
-    }
-    else{
-        date = getDate(req.body.result.parameters['date']);
+    /*process.argv.forEach(function (val, index, array) {
+        console.log(index + ': ' + val);
+    });*/
+    if(process.argv[2] === "-g"){
+        console.log("%j",req.body);
     }
     
+    var meal = req.body.result.parameters['meal-type'];
+    var date;
+    if (req.body.result.parameters['date'] === '') {
+        date = convertTimeStampToDate(req.body['timestamp']);
+    }
+    else {
+        date = getDate(req.body.result.parameters['date']);
+    }
+
     var cached = false;
     var matchedMeal;
     for (i = 0; i < mealInfo.length; i++) {
@@ -172,8 +178,8 @@ function getMenu(mealData, res) {
                     ]
                 }
             }
-            else{
-                var slack_message = {"text": cannonClosed}
+            else {
+                var slack_message = { "text": cannonClosed }
             }
             if (!menuException) {
                 responseString = "At the Fusion station they are serving," + fusion.toString() +
@@ -197,7 +203,7 @@ function getDate(queryDate) {
     return (DateString);
 }
 
-function convertTimeStampToDate(timeStamp){
+function convertTimeStampToDate(timeStamp) {
     var DateString = timeStamp.split('T')[0].replace(/-/g, '');
     return (DateString);
 }
