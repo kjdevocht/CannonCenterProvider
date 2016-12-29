@@ -83,6 +83,7 @@ function getMealIds(date, req, res) {
             else{
                 var slack_message = { "text": menuNotPublished }
                 responseString = menuNotPublished;
+                res.setHeader('Content-type', 'application/json');
                 res.send(JSON.stringify({ speech: responseString, displayText: responseString, data: { "slack": slack_message }, contextOut: [], source: "The Cannon Center Menu" }));
                 return;
             }
