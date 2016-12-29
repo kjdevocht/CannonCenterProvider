@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/server.js",
             "cwd": "${workspaceRoot}"/*,
-            "args":["-d"]*/
+            "args":["-g"]*/
         },
         {
             "type": "node",

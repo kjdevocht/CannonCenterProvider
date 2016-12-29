@@ -6,6 +6,7 @@ var http = require("http");
 var mealInfo = [];
 var dateRange = [];
 var cannonClosed = "Sorry, but the Commons is closed all day";
+var menuNotPublished = "Sorry, but it appears that the menu for that day has not been published yet"
 
 function mealData(mealname, mealid, servedate) {
     this.mealname = mealname;
@@ -78,6 +79,12 @@ function getMealIds(date, req, res) {
                     mealInfo.push(new mealData(meal.mealname, meal.mealid, meal.servedate));
                 })
                 module.exports.menu(req, res);
+            }
+            else{
+                var slack_message = { "text": menuNotPublished }
+                responseString = menuNotPublished;
+                res.send(JSON.stringify({ speech: responseString, displayText: responseString, data: { "slack": slack_message }, contextOut: [], source: "The Cannon Center Menu" }));
+                return;
             }
         });
         req2.end();
