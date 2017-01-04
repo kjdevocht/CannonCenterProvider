@@ -6,7 +6,8 @@ var http = require("http");
 var mealInfo = [];
 var dateRange = [];
 var cannonClosed = "Sorry, but the Commons is closed all day";
-var menuNotPublished = "Sorry, but it appears that the menu for that day has not been published yet"
+var menuNotPublished = "Sorry, but it appears that the menu for that day has not been published yet";
+var noMenu = "Sorry, but it appears that there is no menu for that meal.  The Cannon Center might be closed";
 
 function mealData(mealname, mealid, servedate) {
     this.mealname = mealname;
@@ -20,10 +21,10 @@ module.exports.menu = function (req, res) {
     /*process.argv.forEach(function (val, index, array) {
         console.log(index + ': ' + val);
     });*/
-    if(process.argv[2] === "-g"){
-        console.log("%j",req.body);
+    if (process.argv[2] === "-g") {
+        console.log("%j", req.body);
     }
-    
+
     var meal = req.body.result.parameters['meal-type'];
     var date;
     if (req.body.result.parameters['date'] === '') {
@@ -80,7 +81,7 @@ function getMealIds(date, req, res) {
                 })
                 module.exports.menu(req, res);
             }
-            else{
+            else {
                 var slack_message = { "text": menuNotPublished }
                 responseString = menuNotPublished;
                 res.setHeader('Content-type', 'application/json');
@@ -126,29 +127,35 @@ function getMenu(mealData, res) {
             var speechString;
             var displayString;
             var menuException = false;
-            for (i = 0; i < items.length; i++) {
-                if (items[i].description === "The Commons is Closed All Day") {
-                    responseString = cannonClosed;
-                    menuException = true;
-                    break;
+            if (items.length > 0) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].description === "The Commons is Closed All Day") {
+                        responseString = cannonClosed;
+                        menuException = true;
+                        break;
+                    }
+                    switch (items[i].category) {
+                        case "Euro":
+                            euro.push(items[i].description);
+                            break;
+                        case "Expo":
+                            expo.push(items[i].description);
+                            break;
+                        case "Fusion":
+                            fusion.push(items[i].description);
+                            break;
+                        case "Grainery":
+                            grainery.push(items[i].description);
+                            break;
+                        case "Grill":
+                            grill.push(items[i].description);
+                            break;
+                    }
                 }
-                switch (items[i].category) {
-                    case "Euro":
-                        euro.push(items[i].description);
-                        break;
-                    case "Expo":
-                        expo.push(items[i].description);
-                        break;
-                    case "Fusion":
-                        fusion.push(items[i].description);
-                        break;
-                    case "Grainery":
-                        grainery.push(items[i].description);
-                        break;
-                    case "Grill":
-                        grill.push(items[i].description);
-                        break;
-                }
+            }
+            else {
+                        responseString = noMenu;
+                        menuException = true;
             }
             if (!menuException) {
                 var slack_message = {
